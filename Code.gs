@@ -95,7 +95,8 @@ function exportFilteredFile(mode) {
     const normalizedNotes = normalize(notes);
     const mall = String(row[mallCol]).trim();
     const rowCityRaw = String(row[cityCol]).trim();
-    const city = canonicalCity(rowCityRaw);
+    const parsedRowCity = parseCity(rowCityRaw);
+    const city = parsedRowCity.city;
 
     const rowBrands = String(row[prohibitedBrandsCol] || "")
       .split(",")
@@ -116,53 +117,64 @@ function exportFilteredFile(mode) {
       shops.length === 0 ||
       shops.some(shop => rowShops.includes(shop));
 
-    const isMO =
-      rowCityRaw === "МО" ||
-      rowCityRaw.startsWith("МО (");
+    const filterKey = getFilterKey(rowCityRaw, cityFilterMap);
 
-    let filterKey =
-      cityFilterMap.has(city)
-        ? city
-        : isMO && cityFilterMap.has("__MO_ALL__")
-          ? "__MO_ALL__"
-          : null;
+    const exceptionFilterKey =
+      getExceptionFilterKey(mall, cityFilterMap);
 
-    if (!filterKey) {
-      continue;
-    }
+    const isExceptionMatch =
+      !filterKey &&
+      !!exceptionFilterKey;
+
     let allowedTypes;
     let allowedDayed;
+
     if (mode === "tender") {
+      if (filterKey) {
+        const filters = cityFilterMap.get(filterKey);
+        const exceptionMall = getExceptionMallForRow(mall);
+        const filter = filters.find(f => {
+          if (exceptionMall) {
+            return normalizeMall(f.mall) === normalizeMall(mall);
+          }
+          return getMallKey(city, f.mall) === getMallKey(city, mall);
+        });
 
-      const filters = cityFilterMap.get(filterKey);
-
-      const exceptionMall = getExceptionMallForRow(mall);
-
-      const filter = filters.find(f => {
-        // Exception mall:
-        // match ONLY the same mall, regardless of source city.
-        if (exceptionMall) {
-          return normalizeMall(f.mall) === normalizeMall(mall);
+        if (!filter) {
+          continue;
         }
 
-        // Normal Tender row:
-        // city + mall must both match.
-        return getMallKey(city, f.mall) === getMallKey(city, mall);
-      });
+        allowedTypes = filter.types;
+        allowedDayed = filter.dayed;
 
-      if (!filter) {
+      } else if (isExceptionMatch) {
+        const filters = cityFilterMap.get(exceptionFilterKey);
+        const filter = filters.find(f =>
+          normalizeMall(f.mall) === normalizeMall(mall)
+        );
+        if (!filter) {
+          continue;
+        }
+        allowedTypes = filter.types;
+        allowedDayed = filter.dayed;
+      } else {
+
         continue;
       }
 
-      allowedTypes = filter.types;
-      allowedDayed = filter.dayed;
-
     } else {
+      if (filterKey) {
+        const filter = cityFilterMap.get(filterKey);
+        allowedTypes = filter.types;
+        allowedDayed = filter.dayed;
+      } else if (isExceptionMatch) {
+        const filter = cityFilterMap.get(exceptionFilterKey);
+        allowedTypes = filter.types;
+        allowedDayed = filter.dayed;
+      } else {
 
-      const filter = cityFilterMap.get(filterKey);
-
-      allowedTypes = filter.types;
-      allowedDayed = filter.dayed;
+        continue;
+      }
     }
 
     const rowTypes = type
@@ -469,34 +481,18 @@ function buildAdvancedFilter(filterSheet, cfg) {
       .filter(Boolean);
 
     const rawCity = String(filterData[i][cityCol]).trim();
+    const parsed = parseCity(rawCity);
     const city =
       rawCity === "МО_ВСЕ_ГОРОДА"
         ? "__MO_ALL__"
-        : canonicalCity(rawCity);
+        : parsed.city;
+
     if (!city) continue;
 
-    const filter = {
+    map.set(city, {
       types: new Set(allowedTypes),
       dayed: new Set(allowedDayed)
-    };
-
-    map.set(city, filter);
-
-    // If this city activates Vegas exceptions,
-    // also activate those Vegas malls through the same filter.
-    getExceptionMallsForCity(city).forEach(mall => {
-      EXCEPTION_MALLS[mall].forEach(exceptionCity => {
-        const exceptionCityKey = canonicalCity(exceptionCity);
-
-        if (!map.has(exceptionCityKey)) {
-          map.set(exceptionCityKey, {
-            types: new Set(filter.types),
-            dayed: new Set(filter.dayed)
-          });
-        }
-      });
     });
-
   }
 
   return map;
@@ -517,10 +513,11 @@ function buildTenderFilter(filterSheet, cfg) {
   for (let i = 1; i < data.length; i++) {
     const rawCity = String(data[i][cityCol]).trim();
 
+    const parsed = parseCity(rawCity);
     const city =
       rawCity === "МО_ВСЕ_ГОРОДА"
         ? "__MO_ALL__"
-        : canonicalCity(rawCity);
+        : parsed.city;
 
     if (!city) continue;
 
@@ -547,20 +544,6 @@ function buildTenderFilter(filterSheet, cfg) {
     }
 
     map.get(city).push(filter);
-
-    // ---------- Exception mall ----------
-    const exceptionCities = getExceptionCitiesForMall(mall);
-
-    exceptionCities.forEach(exceptionCity => {
-      if (!map.has(exceptionCity)) {
-        map.set(exceptionCity, []);
-      }
-
-      map.get(exceptionCity).push({
-        ...filter,
-        mall
-      });
-    });
   }
 
   return map;
@@ -593,27 +576,18 @@ function buildListFilter(filterSheet, cfg) {
   const map = new Map();
 
   cities.forEach(city => {
+
+    const parsed = parseCity(city);
     const key =
       city === "МО_ВСЕ_ГОРОДА"
         ? "__MO_ALL__"
-        : canonicalCity(city);
+        : parsed.city;
+
+    if (!key) return;
 
     map.set(key, {
       types,
       dayed
-    });
-
-    getExceptionMallsForCity(key).forEach(exceptionMall => {
-      EXCEPTION_MALLS[exceptionMall].forEach(exceptionCity => {
-        const exceptionCityKey = canonicalCity(exceptionCity);
-
-        if (!map.has(exceptionCityKey)) {
-          map.set(exceptionCityKey, {
-            types,
-            dayed
-          });
-        }
-      });
     });
   });
 

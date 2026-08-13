@@ -16,9 +16,9 @@ function normalize(str) {
 
 function canonicalCity(city) {
   city = String(city).trim();
-  nCity = normalize(city);
+  const nCity = normalize(city);
 
-  const m = city.match(/^МО\s*\(.*?([А-ЯA-Z][^)]+)\)/i);
+  const m = city.match(/^МО\s*\(\s*(?:г\.о\.|г\.|п\.|д\.|с\.)\s*([^)]+)\s*\)$/i);
   if (m) return normalize(m[1]);
 
   if (nCity === normalize("МО")) return "__MO__";
@@ -33,6 +33,44 @@ function canonicalCity(city) {
 
   return normalize(shortCityMap[nCity] || city);
 }
+
+function parseCity(city) {
+  const raw = String(city).trim();
+
+  const match = raw.match(
+    /^(.+?)\s*\(\s*(?:г\.о\.|г\.|п\.|д\.|с\.)\s*([^)]+)\s*\)$/i
+  );
+
+  if (match) {
+    return {
+      parent: canonicalCity(match[1]),
+      city: canonicalCity(match[2]),
+      isSubCity: true
+    };
+  }
+
+  return {
+    parent: null,
+    city: canonicalCity(raw),
+    isSubCity: false
+  };
+}
+
+
+function getFilterKey(rowCityRaw, cityFilterMap) {
+  const parsed = parseCity(rowCityRaw);
+
+  if (parsed.city && cityFilterMap.has(parsed.city)) {
+    return parsed.city;
+  }
+
+  if (parsed.parent && cityFilterMap.has(parsed.parent)) {
+    return parsed.parent;
+  }
+
+  return null;
+}
+
 
 function citySortInfo(city) {
   city = String(city).trim();
@@ -73,6 +111,7 @@ function getExceptionCitiesForMall(mall) {
   return entry[1].map(city => canonicalCity(city));
 }
 
+
 function getExceptionMallsForCity(city) {
   const cityKey = canonicalCity(city);
   const result = [];
@@ -96,6 +135,30 @@ function getExceptionMallForRow(mall) {
       normalizeMall(exceptionMall) === mallKey
     ) || null;
 }
+
+function getExceptionFilterKey(mall, cityFilterMap) {
+  const exceptionMall = getExceptionMallForRow(mall);
+  if (!exceptionMall) {
+    return null;
+  }
+  for (const filterCity of cityFilterMap.keys()) {
+
+    if (filterCity === "__MO_ALL__") {
+      continue;
+    }
+    const exceptionMalls = getExceptionMallsForCity(filterCity);
+    if (
+      exceptionMalls.some(
+        exceptionMallName =>
+          normalizeMall(exceptionMallName) === normalizeMall(exceptionMall)
+      )
+    ) {
+      return filterCity;
+    }
+  }
+  return null;
+}
+
 
 
 function getWorkingHours(schedule) {
