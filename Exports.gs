@@ -190,21 +190,26 @@ function exportCurrentSheetPretty(isFull){
 
   if (dataRows) {
   // 2. Alignment
-  const ttRange = resultSheet.getRange(1, 11, lastRow, 3);
+  const ttRange = resultSheet.getRange(1, 11, dataRows, 3);
   const ttValues = ttRange.getValues();
   ttRange.setHorizontalAlignments(
     ttValues.map(row =>
       row.map(value => value === "-" ? "center" : "left")
     )
   );
-
+  const cityRange = resultSheet.getRange(2, 3, dataRows, 1);
+  cityRange.setHorizontalAlignments(
+    cityRange.getValues().map(row =>
+      row.map(value => String(value || "").length < 8 ? "center" : "left")
+    )
+  );
   // center
   [2,4,6,7,9,14,15,16,17,18,19,20,21,22,25,28,29,30,31].forEach(col => {
       resultSheet.getRange(2, col, dataRows, 1).setHorizontalAlignment("center");
   });
 
   // left
-  [1,3,5,8,10,32].forEach(col => {
+  [1,5,8,10,32].forEach(col => {
       resultSheet.getRange(2, col, dataRows, 1).setHorizontalAlignment("left");
   });
 
@@ -382,8 +387,12 @@ function exportCurrentSheetPretty(isFull){
       "black",
       SpreadsheetApp.BorderStyle.SOLID);
 
+  resultSheet.getRange(`W${footerRow}`)
+    .setBackground("white")
+    .setFontWeight("normal")
+    .setFontColor("#0033cc");
 
-  resultSheet.getRangeList([`W${footerRow}`,`X${footerRow}`,`AA${footerRow}`])
+  resultSheet.getRangeList([`X${footerRow}`,`AA${footerRow}`])
     .setBackground("yellow")
     .setFontWeight("normal")
     .setFontColor("#0033cc");

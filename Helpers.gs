@@ -8,7 +8,7 @@ function formatPeriod(fromDate, toDate) {
 function normalize(str) {
   return String(str)
     .toLowerCase()
-    .replace(/\((?:г\.о\.|г\.|д\.|с\.)\s*/g, "")
+    .replace(/\((?:г\.о\.|г\.|п\.|д\.|с\.)\s*/g, "")
     .replace(/\s+/g, "")
     .replace("ё", "е")
     .replace(/[-_.,;:()]/g, "");
