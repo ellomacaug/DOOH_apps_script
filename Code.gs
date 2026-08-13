@@ -29,25 +29,26 @@ function exportFilteredFile(mode) {
   const isDayedCol = headers.indexOf('Делают пересчёт по дням');
   const notesCol = headers.indexOf("№");
   const mallCol = headers.indexOf("Торговый центр");
+  const prohibitedBrandsCol = headers.indexOf("Кого ТОЧНО не размещают");
   const shopCols = [
     headers.indexOf("Магазин бытовой техники"),
     headers.indexOf("Кинотеатр"),
     headers.indexOf("Гипермаркет")
   ];
 
-  if (shopCols.some(col => col === -1)) {
-    throw new Error("One or more shop columns not found.");
-  }
   if (cityCol === -1 || typeCol === -1) {
-    throw new Error('Columns not found in source sheet.');
+    throw new Error('В супер файле что-то не так (Нет столбцов Город или DOOH/Digital Indoor).');
   }
 
+  if (shopCols.some(col => col === -1)) {
+    throw new Error('В супер файле что-то не так (Нет столбцов с Гипермаркетом или Кинотеатром или МБТ или "Кого ТОЧНО не размещают").');
+  }
   const durationCol = headers.indexOf('Продолжительность размещения');
   const periodCol = headers.indexOf('Период размещения');
   const daysCol = headers.indexOf('Кол-во дней');
 
   if (durationCol === -1 || periodCol === -1 || daysCol === -1) {
-    throw new Error("One or more output columns not found.");
+    throw new Error("В супер файле что-то не так (не хватает нужных столбов).");
   }
 
   // ---------- Read filter table ----------
@@ -95,6 +96,13 @@ function exportFilteredFile(mode) {
     const mall = String(row[mallCol]).trim();
     const rowCityRaw = String(row[cityCol]).trim();
     const city = canonicalCity(rowCityRaw);
+
+    const rowBrands = String(row[prohibitedBrandsCol] || "")
+      .split(",")
+      .map(s => normalize(s))
+      .filter(Boolean);
+
+    const isNOTProhibitedBrand = !brand || !rowBrands.includes(normalize(brand));
 
     const rowShops = shopCols
       .flatMap(col =>
@@ -195,7 +203,7 @@ function exportFilteredFile(mode) {
     }
 
     // empty type list means "all types"
-    if (typeMatch && dayedMatch && shopMatch) {
+    if (typeMatch && dayedMatch && shopMatch && isNOTProhibitedBrand) {
       result.push(newRow);
       formulaRows.push(newFormulaRow);
       matchedRows.push(i + 1);
