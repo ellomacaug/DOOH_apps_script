@@ -41,7 +41,7 @@ function exportCurrentSheetEmailSender(){
   const sourceSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const newSS = SpreadsheetApp.create('contacts'); 
   const resultSheet = sourceSheet.copyTo(newSS);
-  resultSheet.setName('Лист1'); 
+  resultSheet.setName('contacts'); 
   const defaultSheet = newSS.getSheets().find(
     s => s.getSheetId() !== resultSheet.getSheetId()
   );
