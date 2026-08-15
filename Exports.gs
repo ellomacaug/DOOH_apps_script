@@ -61,7 +61,7 @@ function exportCurrentSheetEmailSender(){
     }
   }
 
-  const keep = [3, 4, 8, 9, 10, 12, 19, 20, 45, 46];
+  const keep = [3, 4, 7, 8, 9, 10, 12, 19, 20, 45, 46];
 
   for (let col = resultSheet.getLastColumn(); col >= 1; col--) {
     if (!keep.includes(col)) {
@@ -72,6 +72,7 @@ function exportCurrentSheetEmailSender(){
   resultSheet.getRange(1, 1, 1, 10).setValues([[
     "city",
     "mall",
+    "type",
     "rim",
     "num",
     "size",
