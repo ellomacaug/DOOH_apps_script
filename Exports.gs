@@ -69,7 +69,7 @@ function exportCurrentSheetEmailSender(){
     }
   }
 
-  resultSheet.getRange(1, 1, 1, 10).setValues([[
+  resultSheet.getRange(1, 1, 1, 11).setValues([[
     "city",
     "mall",
     "type",
