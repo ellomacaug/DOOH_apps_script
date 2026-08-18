@@ -190,323 +190,433 @@ function exportCurrentSheetPretty(isFull){
     );
 
   if (dataRows) {
-  // 2. Alignment
-  const ttRange = resultSheet.getRange(1, 11, dataRows, 3);
-  const ttValues = ttRange.getValues();
-  ttRange.setHorizontalAlignments(
-    ttValues.map(row =>
-      row.map(value => value === "-" ? "center" : "left")
-    )
-  );
-  const cityRange = resultSheet.getRange(2, 3, dataRows, 1);
-  cityRange.setHorizontalAlignments(
-    cityRange.getValues().map(row =>
-      row.map(value => String(value || "").length < 8 ? "center" : "left")
-    )
-  );
-  // center
-  [2,4,6,7,9,14,15,16,17,18,19,20,21,22,25,28,29,30,31].forEach(col => {
-      resultSheet.getRange(2, col, dataRows, 1).setHorizontalAlignment("center");
-  });
+    // 2. Alignment
+    const ttRange = resultSheet.getRange(1, 11, dataRows, 3);
+    const ttValues = ttRange.getValues();
+    ttRange.setHorizontalAlignments(
+      ttValues.map(row =>
+        row.map(value => value === "-" ? "center" : "left")
+      )
+    );
+    const cityRange = resultSheet.getRange(2, 3, dataRows, 1);
+    cityRange.setHorizontalAlignments(
+      cityRange.getValues().map(row =>
+        row.map(value => String(value || "").length < 8 ? "center" : "left")
+      )
+    );
+    // center
+    [2,4,6,7,9,14,15,16,17,18,19,20,21,22,25,28,29,30,31].forEach(col => {
+        resultSheet.getRange(2, col, dataRows, 1).setHorizontalAlignment("center");
+    });
 
-  // left
-  [1,5,8,10,32].forEach(col => {
-      resultSheet.getRange(2, col, dataRows, 1).setHorizontalAlignment("left");
-  });
+    // left
+    [1,5,8,10,32].forEach(col => {
+        resultSheet.getRange(2, col, dataRows, 1).setHorizontalAlignment("left");
+    });
 
-  // right
-  [23,24,26,27].forEach(col => {
-      resultSheet.getRange(2, col, dataRows, 1).setHorizontalAlignment("right");
-  });
+    // right
+    [23,24,26,27].forEach(col => {
+        resultSheet.getRange(2, col, dataRows, 1).setHorizontalAlignment("right");
+    });
 
-  // 3. Column widths
-  resultSheet.setColumnWidth(1,6);
-  resultSheet.setColumnWidth(2,25);
-  resultSheet.setColumnWidth(3,70);
-  resultSheet.setColumnWidth(4,225);
-  resultSheet.setColumnWidth(8,225);
-  resultSheet.setColumnWidth(11,110);
-  resultSheet.setColumnWidth(12,160);
-  resultSheet.setColumnWidth(15,150);
-  resultSheet.setColumnWidth(16,70);
-  resultSheet.setColumnWidth(17,85);
-  resultSheet.setColumnWidth(18,90);
-  resultSheet.setColumnWidth(20,110);
-  resultSheet.setColumnWidth(21,85);
-  resultSheet.setColumnWidth(22,85);
-  resultSheet.setColumnWidth(23,200);
-  resultSheet.setColumnWidth(24,200);
-  if (rA.length > 6) {resultSheet.setColumnWidth(25,160);}
-  resultSheet.setColumnWidth(26,200);
-  resultSheet.setColumnWidth(27,210);
-  resultSheet.setColumnWidth(28,148);
+    // 3. Column widths
+    resultSheet.setColumnWidth(1,6);
+    resultSheet.setColumnWidth(2,25);
+    resultSheet.setColumnWidth(3,70);
+    resultSheet.setColumnWidth(4,225);
+    resultSheet.setColumnWidth(8,225);
+    resultSheet.setColumnWidth(11,110);
+    resultSheet.setColumnWidth(12,160);
+    resultSheet.setColumnWidth(15,150);
+    resultSheet.setColumnWidth(16,70);
+    resultSheet.setColumnWidth(17,85);
+    resultSheet.setColumnWidth(18,90);
+    resultSheet.setColumnWidth(20,110);
+    resultSheet.setColumnWidth(21,85);
+    resultSheet.setColumnWidth(22,85);
+    resultSheet.setColumnWidth(23,200);
+    resultSheet.setColumnWidth(24,200);
+    if (rA.length > 6) {resultSheet.setColumnWidth(25,160);}
+    resultSheet.setColumnWidth(26,200);
+    resultSheet.setColumnWidth(27,210);
+    resultSheet.setColumnWidth(28,148);
 
-  resultSheet.autoResizeColumn(31);
-  let currentWidth = resultSheet.getColumnWidth(31);
-  if (currentWidth < 110) { resultSheet.setColumnWidth(31, 110); }
+    resultSheet.autoResizeColumn(31);
+    let currentWidth = resultSheet.getColumnWidth(31);
+    if (currentWidth < 110) { resultSheet.setColumnWidth(31, 110); }
 
-  resultSheet.autoResizeColumn(32);
-  currentWidth = resultSheet.getColumnWidth(32);
-  if (currentWidth < 120) { resultSheet.setColumnWidth(32, 120); } else if (currentWidth > 250){resultSheet.setColumnWidth(32, 250);}
+    resultSheet.autoResizeColumn(32);
+    currentWidth = resultSheet.getColumnWidth(32);
+    if (currentWidth < 120) { resultSheet.setColumnWidth(32, 120); } else if (currentWidth > 250){resultSheet.setColumnWidth(32, 250);}
 
-  // 5. Font sizes
-  resultSheet.getRange(1,1,1,resultSheet.getLastColumn()).setFontFamily("Palatino Linotype").setFontSize(11);
-  resultSheet
-    .getRange(2,1,dataRows,resultSheet.getLastColumn())
-    .setFontSize(10)
-    .setFontFamily("Palatino Linotype");
+    // 5. Font sizes
+    resultSheet.getRange(1,1,1,resultSheet.getLastColumn()).setFontFamily("Palatino Linotype").setFontSize(11);
+    resultSheet
+      .getRange(2,1,dataRows,resultSheet.getLastColumn())
+      .setFontSize(10)
+      .setFontFamily("Palatino Linotype");
 
-  const linkRange = resultSheet.getRange(2,11,dataRows-1,3);
-  linkRange.setFontColors(
-    linkRange.getValues().map(row =>
-      row.map(value => value === "-" ? "black" : "blue")
-    )
-  );
-
-  // 6. Bold columns
-  [
-    [[4,9,14,15,16,18,19,20,21,22,25,26,27,28,29,30,31], "bold"],
-    [[1,2,3,5,6,7,8,10,11,12,13,17,23,24,32], "normal"]
-  ].forEach(([cols, weight]) =>
-    cols.forEach(col =>
-      resultSheet.getRange(2, col, dataRows, 1).setFontWeight(weight)
-    )
-  );
-
-  const rAColor1 = RA_CONFIG[rA.toUpperCase()]?.color1 || "black";
-  const rAColor2 = RA_CONFIG[rA.toUpperCase()]?.color2 || "white";
-
-  // табличка сверху
-  resultSheet.insertRows(1, 6);
-  resultSheet.getRange(1, 1, 6, resultSheet.getLastColumn()+20).setBackground("white");
-  resultSheet.getRange(7, endCol+1, maxRows+200, resultSheet.getLastColumn()+20).setBackground("white");
-  resultSheet.getRange(lastRow+1, endCol+1, maxRows+200-lastRow, resultSheet.getLastColumn()+20)
-    .setBorder(
-      true, true, true, true, true, true,
-      "white",
-      SpreadsheetApp.BorderStyle.SOLID
+    const linkRange = resultSheet.getRange(2,11,dataRows-1,3);
+    linkRange.setFontColors(
+      linkRange.getValues().map(row =>
+        row.map(value => value === "-" ? "black" : "blue")
+      )
     );
 
-  resultSheet.getRange("C2").setValue("РА:");
-  resultSheet.getRange("E2").setValue(rA);
-
-  resultSheet.getRange("C3").setValue("Клиент:");
-  resultSheet.getRange("E3").setValue(brand);
-
-  resultSheet.getRange("C4").setValue("Период размещения:");
-  resultSheet.getRange("E4").setValue(formatPeriod(fromDate, toDate));
-
-  resultSheet.getRange("C5").setValue("Дата расчета:");
-  resultSheet.getRange("E5").setValue(new Date()).setNumberFormat("dd.MM.yyyy");
-  
-  resultSheet.getRange("C2:D5").mergeAcross();
-  resultSheet.getRange("E2:F5").mergeAcross();
-
-  const infoRange = resultSheet.getRange("C2:F5");
-  infoRange
-    .setFontFamily("Palatino Linotype")
-    .setFontSize(12)
-    .setFontColor("black")
-    .setFontWeight("bold")
-    .setHorizontalAlignment("center")
-    .setVerticalAlignment("middle");
-
-  resultSheet.getRange("C2:D5").setHorizontalAlignment("left");
-  resultSheet.getRange("E2:F2").setFontColor(rAColor1)
-
-  resultSheet.getRange(1, 1, 6, maxCols)
-    .setBorder(
-      true, true, true, true, true, true,
-      "white",
-      SpreadsheetApp.BorderStyle.SOLID
+    // 6. Bold columns
+    [
+      [[4,9,14,15,16,18,19,20,21,22,25,26,27,28,29,30,31], "bold"],
+      [[1,2,3,5,6,7,8,10,11,12,13,17,23,24,32], "normal"]
+    ].forEach(([cols, weight]) =>
+      cols.forEach(col =>
+        resultSheet.getRange(2, col, dataRows, 1).setFontWeight(weight)
+      )
     );
 
-  infoRange.setBorder(
-    true, true, true, true, true, true,
-    "black",
-    SpreadsheetApp.BorderStyle.SOLID
-  );
-  lastRow = resultSheet.getLastRow();
-  maxRows = resultSheet.getMaxRows();
-  const rangesToColor = [
-    resultSheet.getRange(1, 1, 6, maxCols).getA1Notation(),
-    resultSheet.getRange(8, 1, maxRows - 7, isFull ? 32 : maxCols).getA1Notation(),
-    "A7",
-    ...(maxCols > endCol
-      ? [resultSheet.getRange(7, endCol + 1, 1, maxCols - endCol).getA1Notation()]
-      : [])];
+    const rAColor1 = RA_CONFIG[rA.toUpperCase()]?.color1 || "black";
+    const rAColor2 = RA_CONFIG[rA.toUpperCase()]?.color2 || "white";
 
-  resultSheet.getRangeList(rangesToColor).setBackground("white");
-  const footerRow = lastRow + 2;
-  
-  // футэр
-  resultSheet
-    .getRange("D" + footerRow)
-    .setValue("Адаптация контента под ТТ экранов – бесплатно.");
-  resultSheet
-    .getRange("D" + (lastRow + 3))
-    .setValue("Фото и видео отчёт – бесплатно.");
-  resultSheet
-    .getRange("C" + (lastRow + 5))
-    .setValue("СOMMENTS / КОММЕНТАРИИ:");
-  resultSheet
-    .getRange("C" + (lastRow + 6))
-    .setValue("* ТЦ оставляет за собой право отказать в размещении по причине несогласования содержания ролика / макета РИМ");
-  resultSheet
-    .getRange("C" + (lastRow + 7))
-    .setValue("* Стоимость действительна для указанного периода и может быть скорректирована при изменении параметров АП ");
-  resultSheet
-    .getRange("C" + (lastRow + 8))
-    .setValue("* Все стороны находятся в свободной продаже");
+    // табличка сверху
+    resultSheet.insertRows(1, 6);
+    resultSheet.getRange(1, 1, 6, resultSheet.getLastColumn()+20).setBackground("white");
+    resultSheet.getRange(7, endCol+1, maxRows+200, resultSheet.getLastColumn()+20).setBackground("white");
+    resultSheet.getRange(lastRow+1, endCol+1, maxRows+200-lastRow, resultSheet.getLastColumn()+20)
+      .setBorder(
+        true, true, true, true, true, true,
+        "white",
+        SpreadsheetApp.BorderStyle.SOLID
+      );
 
-  resultSheet.getRange("C" + footerRow + ":AA" + (lastRow + 8))
-    .setFontFamily("Palatino Linotype")
-    .setFontSize(12)
-    .setFontColor("black")
-    .setFontWeight("bold")
-    .setHorizontalAlignment("left")
-    .setVerticalAlignment("middle");
-  resultSheet.getRange("C" + (lastRow + 5))
-    .setFontColor("red")
-    .setFontLine("underline");
+    resultSheet.getRange("C2").setValue("РА:");
+    resultSheet.getRange("E2").setValue(rA);
 
-  resultSheet.getRange("V" + footerRow + ":AA" + footerRow)
-    .setHorizontalAlignment("right")
-    .setFontSize(10);
+    resultSheet.getRange("C3").setValue("Клиент:");
+    resultSheet.getRange("E3").setValue(brand);
 
+    resultSheet.getRange("C4").setValue("Период размещения:");
+    resultSheet.getRange("E4").setValue(formatPeriod(fromDate, toDate));
 
-  maxRows = resultSheet.getMaxRows();
-  resultSheet.getRange(lastRow+2, 1, maxRows, maxCols)
-    .setBorder(
+    resultSheet.getRange("C5").setValue("Дата расчета:");
+    resultSheet.getRange("E5").setValue(new Date()).setNumberFormat("dd.MM.yyyy");
+    
+    resultSheet.getRange("C2:D5").mergeAcross();
+    resultSheet.getRange("E2:F5").mergeAcross();
+
+    const infoRange = resultSheet.getRange("C2:F5");
+    infoRange
+      .setFontFamily("Palatino Linotype")
+      .setFontSize(12)
+      .setFontColor("black")
+      .setFontWeight("bold")
+      .setHorizontalAlignment("center")
+      .setVerticalAlignment("middle");
+
+    resultSheet.getRange("C2:D5").setHorizontalAlignment("left");
+    resultSheet.getRange("E2:F2").setFontColor(rAColor1)
+
+    resultSheet.getRange(1, 1, 6, maxCols)
+      .setBorder(
+        true, true, true, true, true, true,
+        "white",
+        SpreadsheetApp.BorderStyle.SOLID
+      );
+
+    infoRange.setBorder(
       true, true, true, true, true, true,
-      "white",
-      SpreadsheetApp.BorderStyle.SOLID
-    );
-  resultSheet.getRange("U" + (footerRow+1) + ":AA" + (footerRow+1))
-    .setBorder(
-      true, false, false, false, false, false,
       "black",
-      SpreadsheetApp.BorderStyle.SOLID);
+      SpreadsheetApp.BorderStyle.SOLID
+    );
+    lastRow = resultSheet.getLastRow();
+    maxRows = resultSheet.getMaxRows();
+    const rangesToColor = [
+      resultSheet.getRange(1, 1, 6, maxCols).getA1Notation(),
+      resultSheet.getRange(8, 1, maxRows - 7, isFull ? 32 : maxCols).getA1Notation(),
+      "A7",
+      ...(maxCols > endCol
+        ? [resultSheet.getRange(7, endCol + 1, 1, maxCols - endCol).getA1Notation()]
+        : [])];
 
-  resultSheet.getRange(`W${footerRow}`)
-    .setBackground("white")
-    .setFontWeight("normal")
-    .setFontColor("#0033cc");
+    resultSheet.getRangeList(rangesToColor).setBackground("white");
+    const footerRow = lastRow + 2;
+    
+    // футэр
+    resultSheet
+      .getRange("D" + footerRow)
+      .setValue("Адаптация контента под ТТ экранов – бесплатно.");
+    resultSheet
+      .getRange("D" + (lastRow + 3))
+      .setValue("Фото и видео отчёт – бесплатно.");
+    resultSheet
+      .getRange("C" + (lastRow + 5))
+      .setValue("СOMMENTS / КОММЕНТАРИИ:");
+    resultSheet
+      .getRange("C" + (lastRow + 6))
+      .setValue("* ТЦ оставляет за собой право отказать в размещении по причине несогласования содержания ролика / макета РИМ");
+    resultSheet
+      .getRange("C" + (lastRow + 7))
+      .setValue("* Стоимость действительна для указанного периода и может быть скорректирована при изменении параметров АП ");
+    resultSheet
+      .getRange("C" + (lastRow + 8))
+      .setValue("* Все стороны находятся в свободной продаже");
 
-  resultSheet.getRangeList([`X${footerRow}`,`AA${footerRow}`])
-    .setBackground("yellow")
-    .setFontWeight("normal")
-    .setFontColor("#0033cc");
+    resultSheet.getRange("C" + footerRow + ":AA" + (lastRow + 8))
+      .setFontFamily("Palatino Linotype")
+      .setFontSize(12)
+      .setFontColor("black")
+      .setFontWeight("bold")
+      .setHorizontalAlignment("left")
+      .setVerticalAlignment("middle");
+    resultSheet.getRange("C" + (lastRow + 5))
+      .setFontColor("red")
+      .setFontLine("underline");
 
-  resultSheet.getRangeList([`Y${footerRow}`,`Z${footerRow}`])
-    .setBackground("white")
-    .setFontWeight("bold")
-    .setFontColor("black");
+    resultSheet.getRange("V" + footerRow + ":AA" + footerRow)
+      .setHorizontalAlignment("right")
+      .setFontSize(10);
 
-  const mallC = String(numberOfMalls);
-  const text1 = `Итого_Прайс (${mallC} ТЦ):`;
-  const color1 = "green";
-  const richText1 = SpreadsheetApp.newRichTextValue()
-  .setText(text1)
-  .setTextStyle(SpreadsheetApp.newTextStyle().setForegroundColor("black").build()) 
-  .setTextStyle(text1.indexOf(mallC), text1.indexOf(mallC) + mallC.length + 3, SpreadsheetApp.newTextStyle().setForegroundColor(color1).build())
-  .build();
-  resultSheet
-    .getRange("V" + footerRow)
-    .setRichTextValue(richText1);
 
-  resultSheet
-    .getRange("W" + footerRow)
-    .setFormula(`=SUM(W8:W${lastRow})`);
-  resultSheet
-    .getRange("X" + footerRow)
-    .setFormula(`=SUM(X8:X${lastRow})`);
+    maxRows = resultSheet.getMaxRows();
+    resultSheet.getRange(lastRow+2, 1, maxRows, maxCols)
+      .setBorder(
+        true, true, true, true, true, true,
+        "white",
+        SpreadsheetApp.BorderStyle.SOLID
+      );
+    resultSheet.getRange("U" + (footerRow+1) + ":AA" + (footerRow+1))
+      .setBorder(
+        true, false, false, false, false, false,
+        "black",
+        SpreadsheetApp.BorderStyle.SOLID);
 
-  const text2 = `С учётом скидок для ${rA}:`;
-  const richText2 = SpreadsheetApp.newRichTextValue()
-  .setText(text2)
-  .setTextStyle(SpreadsheetApp.newTextStyle().setForegroundColor("black").build()) 
-  .setTextStyle(text2.indexOf(rA), text2.indexOf(rA) + rA.length, SpreadsheetApp.newTextStyle().setForegroundColor(rAColor1).build())
-  .build();
-  resultSheet
-    .getRange("Z" + footerRow)
-    .setRichTextValue(richText2);
+    resultSheet.getRange(`W${footerRow}`)
+      .setBackground("white")
+      .setFontWeight("normal")
+      .setFontColor("#0033cc");
 
-  resultSheet
-    .getRange("AA" + footerRow)
-    .setFormula(`=SUM(AA8:AA${lastRow})`);
+    resultSheet.getRangeList([`X${footerRow}`,`AA${footerRow}`])
+      .setBackground("yellow")
+      .setFontWeight("normal")
+      .setFontColor("#0033cc");
 
-  // 1. Borders
-    resultSheet.getRange(8, 2, lastRow-7, endCol-1)
+    resultSheet.getRangeList([`Y${footerRow}`,`Z${footerRow}`])
+      .setBackground("white")
+      .setFontWeight("bold")
+      .setFontColor("black");
+
+    const mallC = String(numberOfMalls);
+    const text1 = `Итого_Прайс (${mallC} ТЦ):`;
+    const color1 = "green";
+    const richText1 = SpreadsheetApp.newRichTextValue()
+    .setText(text1)
+    .setTextStyle(SpreadsheetApp.newTextStyle().setForegroundColor("black").build()) 
+    .setTextStyle(text1.indexOf(mallC), text1.indexOf(mallC) + mallC.length + 3, SpreadsheetApp.newTextStyle().setForegroundColor(color1).build())
+    .build();
+    resultSheet
+      .getRange("V" + footerRow)
+      .setRichTextValue(richText1);
+
+    resultSheet
+      .getRange("W" + footerRow)
+      .setFormula(`=SUM(W8:W${lastRow})`);
+    resultSheet
+      .getRange("X" + footerRow)
+      .setFormula(`=SUM(X8:X${lastRow})`);
+
+    const text2 = `С учётом скидок для ${rA}:`;
+    const richText2 = SpreadsheetApp.newRichTextValue()
+    .setText(text2)
+    .setTextStyle(SpreadsheetApp.newTextStyle().setForegroundColor("black").build()) 
+    .setTextStyle(text2.indexOf(rA), text2.indexOf(rA) + rA.length, SpreadsheetApp.newTextStyle().setForegroundColor(rAColor1).build())
+    .build();
+    resultSheet
+      .getRange("Z" + footerRow)
+      .setRichTextValue(richText2);
+
+    resultSheet
+      .getRange("AA" + footerRow)
+      .setFormula(`=SUM(AA8:AA${lastRow})`);
+
+    // 1. Borders
+      resultSheet.getRange(8, 2, lastRow-7, endCol-1)
+        .setBorder(
+          true, true, true, true, true, true,
+          "black",
+          SpreadsheetApp.BorderStyle.SOLID
+        );
+
+    // 4. Row heights
+    for (let r = 1; r <= 6; r++) {
+      resultSheet.setRowHeight(r,26);
+    }
+    resultSheet.setRowHeight(7,100);
+    for (let r = 8; r <= maxRows; r++) {
+      resultSheet.setRowHeight(r,22);
+    }
+
+    // заголовок таблицы
+    resultSheet.getRange("B7:AF7")
+      .setFontFamily("Palatino Linotype")
+      .setFontWeight("bold")
+      .setHorizontalAlignment("center")
+      .setVerticalAlignment("middle")
       .setBorder(
         true, true, true, true, true, true,
         "black",
         SpreadsheetApp.BorderStyle.SOLID
       );
+    
+    
+    const text3 = `Скидка для ${rA}, %`;
+    const richText3 = SpreadsheetApp.newRichTextValue()
+    .setText(text3)
+    .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
+    .setTextStyle(text3.indexOf(rA), text3.indexOf(rA) + rA.length, SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(rAColor2).build())
+    .build();
+    resultSheet
+      .getRange("Y7")
+      .setRichTextValue(richText3);
 
-  // 4. Row heights
-  for (let r = 1; r <= 6; r++) {
-    resultSheet.setRowHeight(r,26);
+    const text4 = `Стоимость размещения с учётом скидок для ${rA}, руб., за ПЕРИОД, без НДС.`;
+    const richText4 = SpreadsheetApp.newRichTextValue()
+    .setText(text4)
+    .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
+    .setTextStyle(text4.indexOf(rA)+ rA.length + 8, text4.indexOf(rA) + rA.length + 17,SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("yellow").build())
+    .setTextStyle(text4.indexOf(rA), text4.indexOf(rA) + rA.length, SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(rAColor2).build())
+    .build();
+    resultSheet
+      .getRange("AA7")
+      .setRichTextValue(richText4);
+    
+    const richText5 = SpreadsheetApp.newRichTextValue()
+    .setText(`Стоимость размещения по ПРАЙСУ руб., за 1 месяц, без НДС.`)
+    .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
+    .setTextStyle(37, 47,SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("yellow").build())
+    .build();
+    resultSheet
+      .getRange("W7")
+      .setRichTextValue(richText5);
+    
+    const richText6 = SpreadsheetApp.newRichTextValue()
+    .setText('Стоимость размещения по ПРАЙСУ руб., за ПЕРИОД, без НДС.')
+    .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
+    .setTextStyle(37, 46,SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("yellow").build())
+    .build();
+    resultSheet
+      .getRange("X7")
+      .setRichTextValue(richText6);
+
+
+
+    const types = resultSheet.getRange(8, 7, lastRow - 7, 1).getValues();
+    if (types.some(row => row[0] === "Static")) {
+      resultSheet.insertColumnBefore(28);
+      resultSheet.setColumnWidth(25,200);
+      if (rA.length > 6) {resultSheet.setColumnWidth(27,160);} else {resultSheet.setColumnWidth(27,100);}
+      resultSheet.setColumnWidth(28,250);
+
+      const skidki = resultSheet.getRange(8, 25, lastRow - 7, 1).getValues();
+
+      resultSheet.getRange(8, 26, lastRow - 7, 1).copyTo(
+          resultSheet.getRange(8, 25, lastRow - 7, 1),
+          SpreadsheetApp.CopyPasteType.PASTE_NORMAL,
+          false);
+
+      resultSheet.getRange(8, 27, lastRow - 7, 1)
+        .setValues(skidki)
+        .setFontWeight("bold")
+        .setFontColor("black")
+        .setHorizontalAlignment("center")
+        .setNumberFormat("0%");
+
+      resultSheet
+        .getRange(8, 26, lastRow - 5, 1)
+        .copyTo(
+          resultSheet.getRange(8, 28, lastRow - 5, 1),
+          SpreadsheetApp.CopyPasteType.PASTE_FORMAT,
+          false
+        );
+
+      const startRow = 8;
+      const numRows = lastRow - startRow + 1;
+
+      [
+        [26, (r) => `=X${r}+Y${r}`],
+        [28, (r) => `=Z${r}*(1-AA${r})`],
+      ].forEach(([col, formula]) => {
+        resultSheet
+          .getRange(startRow, col, numRows, 1)
+          .setFormulas(
+            Array.from(
+              { length: numRows },
+              (_, i) => [formula(startRow + i)]
+            )
+          );
+      });
+
+      const footerW = resultSheet.getRange("W" + footerRow);
+      ["W", "X", "Y", "Z", "AB"].forEach(col => {
+        resultSheet
+          .getRange(col + footerRow)
+          .setFormula(`=SUM(${col}8:${col}${lastRow})`);
+        footerW.copyTo(
+          resultSheet.getRange(col + footerRow),
+          SpreadsheetApp.CopyPasteType.PASTE_FORMAT,
+          false
+        );
+      });
+
+      resultSheet.getRange("U" + (footerRow+1) + ":AB" + (footerRow+1))
+        .setBorder(
+          true, false, false, false, false, false,
+          "black",
+          SpreadsheetApp.BorderStyle.SOLID);
+
+      resultSheet.getRangeList([`W${footerRow}`, `X${footerRow}`,`Y${footerRow}`,`AA${footerRow}`])
+        .setBackground("white")
+        .setFontWeight("normal")
+        .setFontColor("#0033cc");
+
+      resultSheet.getRangeList([`Z${footerRow}`,`AB${footerRow}`])
+        .setBackground("yellow")
+        .setFontWeight("normal")
+        .setFontColor("#0033cc");
+
+      const text21 = `Цена для ${rA}:`;
+      const richText21 = SpreadsheetApp.newRichTextValue()
+      .setText(text21)
+      .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("black").build()) 
+      .setTextStyle(text21.indexOf(rA), text21.indexOf(rA) + rA.length, SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(rAColor1).build())
+      .build();
+      resultSheet
+        .getRange("AA" + footerRow)
+        .setRichTextValue(richText21);
+
+      resultSheet.getRange("Y7").setValue('Стоимость одного производства и монтажа / демонтажа, руб., без НДС.');
+
+      const richText31 = SpreadsheetApp.newRichTextValue()
+      .setText(`Итоговая стоимость размещения, производства и монтажа / демонтажа, руб., без НДС.`)
+      .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
+      .setTextStyle(0, 9,SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("yellow").build())
+      .build();
+      resultSheet
+        .getRange("Z7")
+        .setRichTextValue(richText31);
+
+      resultSheet.getRange("AA7").setRichTextValue(richText3);
+
+
+      const text41 = `Итоговая стоимость размещения, производства и монтажа / демонтажа с учётом скидок для ${rA} по ПРАЙСУ руб., за ПЕРИОД, без НДС.`;
+      const richText41 = SpreadsheetApp.newRichTextValue()
+      .setText(text41)
+      .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
+      .setTextStyle(text41.indexOf(rA)+ rA.length + 17, text41.indexOf(rA) + rA.length + 26,SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("yellow").build())
+      .setTextStyle(text41.indexOf(rA), text41.indexOf(rA) + rA.length, SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(rAColor2).build())
+      .build();
+      resultSheet
+        .getRange("AB7")
+        .setRichTextValue(richText41);
+    }
   }
-  resultSheet.setRowHeight(7,100);
-  for (let r = 8; r <= maxRows; r++) {
-    resultSheet.setRowHeight(r,22);
-  }
-
-  // заголовок таблицы
-  resultSheet.getRange("B7:AF7")
-    .setFontFamily("Palatino Linotype")
-    .setFontWeight("bold")
-    .setHorizontalAlignment("center")
-    .setVerticalAlignment("middle")
-    .setBorder(
-      true, true, true, true, true, true,
-      "black",
-      SpreadsheetApp.BorderStyle.SOLID
-    );
-  
-  
-  const text3 = `Скидка для ${rA}, %`;
-  const richText3 = SpreadsheetApp.newRichTextValue()
-  .setText(text3)
-  .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
-  .setTextStyle(text3.indexOf(rA), text3.indexOf(rA) + rA.length, SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(rAColor2).build())
-  .build();
-  resultSheet
-    .getRange("Y7")
-    .setRichTextValue(richText3);
-
-  const text4 = `Стоимость размещения с учётом скидок для ${rA}, руб., за ПЕРИОД, без НДС.`;
-  const richText4 = SpreadsheetApp.newRichTextValue()
-  .setText(text4)
-  .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
-  .setTextStyle(text4.indexOf(rA)+ rA.length + 8, text4.indexOf(rA) + rA.length + 17,SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("yellow").build())
-  .setTextStyle(text4.indexOf(rA), text4.indexOf(rA) + rA.length, SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(rAColor2).build())
-  .build();
-  resultSheet
-    .getRange("AA7")
-    .setRichTextValue(richText4);
-  
-  const richText5 = SpreadsheetApp.newRichTextValue()
-  .setText(`Стоимость размещения по ПРАЙСУ руб., за 1 месяц, без НДС.`)
-  .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
-  .setTextStyle(37, 47,SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("yellow").build())
-  .build();
-  resultSheet
-    .getRange("W7")
-    .setRichTextValue(richText5);
-  
-  const richText6 = SpreadsheetApp.newRichTextValue()
-  .setText('Стоимость размещения по ПРАЙСУ руб., за ПЕРИОД, без НДС.')
-  .setTextStyle(SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("white").build()) 
-  .setTextStyle(37, 46,SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor("yellow").build())
-  .build();
-  resultSheet
-    .getRange("X7")
-    .setRichTextValue(richText6);
-
-  }
-
 
 
   // Restore ЗАКУПОЧНАЯ И ФОРМУЛА from CA:CB
@@ -518,11 +628,13 @@ function exportCurrentSheetPretty(isFull){
       SpreadsheetApp.CopyPasteType.PASTE_NORMAL,
       false
     );
-    resultSheet.deleteColumns(endCol+23, 3);
-    resultSheet.getRange(1, 23, lastRow, 2).setBackground("yellow").setFontColor("black");
-  
-    resultSheet.getRange("W7").setValue("Закупочная");
-    resultSheet.getRange("X7").setValue("Формула");
+  resultSheet.deleteColumns(endCol+23, 3);
+  resultSheet.getRange(1, 23, lastRow, 2).setBackground("yellow").setFontColor("black");
+  resultSheet.setColumnWidth(23,100);
+  resultSheet.setColumnWidth(24,100);
+
+  resultSheet.getRange("W7").setValue("Закупочная");
+  resultSheet.getRange("X7").setValue("Формула"); 
     
 
   resultSheet.setFrozenColumns(4);
